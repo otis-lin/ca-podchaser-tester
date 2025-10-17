@@ -161,12 +161,7 @@ class TranscriptDownloader:
         Returns:
             Number of transcripts successfully downloaded
         """
-        async with httpx.AsyncClient(
-            limits=httpx.Limits(
-                max_connections=100,
-                max_keepalive_connections=100
-            )
-        ) as client:
+        async with httpx.AsyncClient() as client:
             tasks = [
                 self.download_episode_transcripts(client, episode)
                 for episode in episodes
