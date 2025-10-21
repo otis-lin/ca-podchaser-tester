@@ -122,7 +122,7 @@ class GraphQLClient:
             self.GRAPHQL_ENDPOINT,
             json=payload,
             headers=self.headers,
-            timeout=30.0
+            timeout=60.0
         )
         response.raise_for_status()
         
