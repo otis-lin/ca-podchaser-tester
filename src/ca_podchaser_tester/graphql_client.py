@@ -75,6 +75,27 @@ class GraphQLClient:
     }
     """
 
+    # GraphQL query for fetching a single episode by ID
+    GET_EPISODE_BY_ID = """
+    query GET_EPISODE_BY_ID ($episodeId: String!) {
+        episode(identifier: {id: $episodeId, type: PODCHASER}) {
+            id
+            audioUrl
+            url
+            webUrl
+            airDate
+            addedDate
+            transcripts {
+                url
+                source
+                transcriptType
+                generatedDate
+                transcribedAudioUrl
+            }
+        }
+    }
+    """
+
     def __init__(self, headers: dict):
         """Initialize GraphQL client with authentication headers.
         
@@ -183,4 +204,52 @@ class GraphQLClient:
                     break
                     
                 cursor = next_cursor
+
+    async def fetch_episode_by_id(
+        self,
+        client: httpx.AsyncClient,
+        episode_id: str
+    ) -> Optional[Dict[str, Any]]:
+        """Fetch a single episode by its ID.
+        
+        Args:
+            client: Async HTTP client
+            episode_id: The episode ID to fetch
+            
+        Returns:
+            Dictionary containing episode data, or None if not found
+            
+        Raises:
+            httpx.HTTPError: If API request fails
+        """
+        variables = {
+            "episodeId": episode_id
+        }
+
+        payload = {
+            "query": self.GET_EPISODE_BY_ID,
+            "variables": variables
+        }
+
+        # Time the API call
+        start_time = time.time()
+        
+        response = await client.post(
+            self.GRAPHQL_ENDPOINT,
+            json=payload,
+            headers=self.headers,
+            timeout=60.0
+        )
+        response.raise_for_status()
+        
+        elapsed_time = time.time() - start_time
+        logger.debug(f"GraphQL API call for episode {episode_id} completed in {elapsed_time:.2f}s")
+        
+        data = response.json()
+        
+        # Check for GraphQL errors
+        if "errors" in data:
+            raise Exception(f"GraphQL errors: {data['errors']}")
+        
+        return data["data"]["episode"]
 

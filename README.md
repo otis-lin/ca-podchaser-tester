@@ -67,12 +67,52 @@ poetry run podchaser-dl --help
 
 ## CLI Options
 
+### podchaser-dl
+
 - `--start-date`: Start date for episode search (YYYY-MM-DD) [required]
 - `--end-date`: End date for episode search (YYYY-MM-DD) [required]
 - `--output`: Output JSONL file for episode metadata (default: episodes.jsonl)
 - `--transcripts-dir`: Directory for saving transcript files (default: transcripts)
 - `--verbose`: Enable verbose logging
 - `--help`: Show help message
+
+### verify-transcript
+
+The `verify-transcript` command reads episode IDs from a CSV file, fetches episode data from PodChaser's GraphQL API, downloads both transcript types (beautified_JSON and raw_JSON), and generates plain text articles from the transcripts.
+
+#### Usage
+
+```bash
+poetry run verify-transcript --csv-file csv/transcript_malformed.csv
+```
+
+#### Options
+
+- `--csv-file`: Path to CSV file containing episode IDs [required]
+- `--output-dir`: Directory for saving transcript files and articles (default: transcripts)
+- `--verbose`: Enable verbose logging
+- `--help`: Show help message
+
+#### CSV File Format
+
+The CSV file should have a header row followed by episode IDs:
+
+```csv
+episode_id
+4105436
+45181265
+75641007
+```
+
+#### Output
+
+For each episode ID, the tool will:
+
+1. Download `{episode_id}_beautified_JSON.json` - Beautified transcript with utterances
+2. Download `{episode_id}_raw_JSON.json` - Raw transcript data
+3. Generate `{episode_id}_beautified_post.txt` - Plain text article (concatenated utterances)
+
+All files are saved to the `transcripts/` directory by default.
 
 ## Output Structure
 

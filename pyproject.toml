@@ -19,6 +19,7 @@ packages = [{include = "ca_podchaser_tester", from = "src"}]
 
 [tool.poetry.scripts]
 podchaser-dl = "ca_podchaser_tester.cli:main"
+verify-transcript = "ca_podchaser_tester.cli_verify_transcript:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

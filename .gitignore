@@ -3,9 +3,11 @@
 
 # Downloaded transcripts and data
 transcripts/
-*.jsonl
 test_transcripts/
-
+csv/
+transcript_samples/
+*.jsonl
+*.json
 
 # Python
 __pycache__/
